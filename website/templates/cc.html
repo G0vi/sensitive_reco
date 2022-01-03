@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+ <head>
+<title></title>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+  		<script src="//apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+		<script src="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.js"></script>
+        <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+ </head>
+ <body>
+ <table id="table" data-mobile-responsive="true"></table>
+ <table border = "1" id='tbodyID'> 
+<tr> 
+ <td><input type='checkbox' ></td>
+  <td>1</td>
+   <td>2</td>
+</tr> 
+<tr> 
+ <td><input type='checkbox' ></td>
+  <td>3</td>
+   <td>4</td>
+</tr> 
+<tr> 
+ <td><input type='checkbox' ></td>
+  <td>5</td>
+   <td>6</td>
+</tr> 
+</table> 
+<input type=button value='选择' onclick='ck()'>
+<script>
+    function addFunctionAlty(value, row, index) {
+       return [
+       '<button id="bind" type="button" class="btn btn-default">绑定</button>',
+       '<button id="unbind" type="button" class="btn btn-default">解绑</button>',
+       ].join('');
+     } 
+    window.operateEvents = {
+            'click #bind': function (e, value, row, index) {
+               alert(row.name);
+               $("#upload").modal('show');
+             }, 'click #unbind': function (e, value, row, index) {
+               alert(row.qxxh);
+               $("#upload").modal('show');
+             }
+     };
+
+    $('#table').bootstrapTable({
+        pagination: true,
+        showColumns: true,
+        pageSize: 10,
+        pageNumber: 1,
+        pageList: [10, 25, 50],
+        showRefresh: true,
+        smartDisplay: false,
+        singleSelect: true, // 单选checkbox
+        clickToSelect: true,
+
+        dataType: 'json',
+        sidePagination: 'server',
+        toolbar: '#toolbar',
+
+        columns: [{
+            checkbox: true
+        }, {
+            field: 'netbarNo',
+            title: '网吧编号',
+        }, {
+            field: 'name',
+            title: '网吧名称',
+        }, {
+            field: 'manager',
+            title: '负责人',
+        }, {
+            field: 'phone',
+            title: '手机号',
+        }, {
+            field: 'createTimeStr',
+            title: '创建时间',
+        }, {
+            field: 'address',
+            title: '地址',
+        }, {
+            field: 'operate',
+            title: '操作',
+            events: operateEvents,//给按钮注册事件
+            formatter: addFunctionAlty//表格中增加按钮  
+        }],
+        data: [{netbarNo:"12", name: "张三", manager: "李四", phone: "18811560655", createTimeStr: "周四", address: "啦啦" },
+        {netbarNo:"12", name: "小六", manager: "王老五", phone: "18811560655", createTimeStr: "周四", address: "啦啦" }]
+    });
+
+
+
+    function ck(){
+    var tbodyObj = document.getElementById('tbodyID');
+        $("table :checkbox").each(function(key,value){
+            if($(value).prop('checked')){
+                alert(tbodyObj.rows[key].cells[1].innerHTML); 
+                alert(tbodyObj.rows[key].cells[2].innerHTML); 
+            }
+        })
+    }
+</script>
+</body>
+</html>
+
+
+

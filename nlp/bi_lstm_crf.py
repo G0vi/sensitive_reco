@@ -10,6 +10,20 @@ import torch.autograd as autograd
 import torch.nn as nn
 import torch.optim as optim
 
+START_TAG = "<START>"
+STOP_TAG = "<STOP>"
+
+tag_to_ix = {'O': 0, 'B-TITLE': 1, 'M-TITLE': 2, 'E-TITLE': 3, 'B-NAME': 4, 'M-NAME': 5, 'E-NAME': 6, 'B-CONT': 7,
+             'M-CONT': 8, 'E-CONT': 9, 'B-RACE': 10, 'M-RACE': 11, 'E-RACE': 12, 'B-LOC': 13, 'M-LOC': 14,
+             'E-LOC': 15,
+             'B-EDU': 16, 'M-EDU': 17, 'E-EDU': 18, 'B-PRO': 19, 'M-PRO': 20, 'E-PRO': 21, 'S-RACE': 22,
+             'S-NAME': 23,
+             START_TAG: 24, STOP_TAG: 25}
+
+all_tags = ['O', 'B-TITLE', 'M-TITLE', 'E-TITLE', 'B-NAME', 'M-NAME', 'E-NAME', 'B-CONT', 'M-CONT', 'E-CONT',
+            'B-RACE', 'M-RACE', 'E-RACE', 'B-LOC', 'M-LOC', 'E-LOC', 'B-EDU', 'M-EDU', 'E-EDU', 'B-PRO', 'M-PRO',
+            'E-PRO', 'S-RACE', 'S-NAME', START_TAG, STOP_TAG]
+
 
 def argmax(vec):
     _, idx = torch.max(vec, 1)
@@ -317,27 +331,14 @@ def data_process(file_path):
 
 if __name__ == '__main__':
     torch.manual_seed(2021)
-    training_data = data_process('data/train.char.bmes.csv')
+    training_data = data_process('../data/train.char.bmes.csv')
     random.shuffle(training_data)
-    testing_data = data_process('data/test.char.bmes.csv')
-
-    START_TAG = "<START>"
-    STOP_TAG = "<STOP>"
-
+    testing_data = data_process('../data/test.char.bmes.csv')
     HIDDEN_DIM = 50
-    tag_to_ix = {'O': 0, 'B-TITLE': 1, 'M-TITLE': 2, 'E-TITLE': 3, 'B-NAME': 4, 'M-NAME': 5, 'E-NAME': 6, 'B-CONT': 7,
-                 'M-CONT': 8, 'E-CONT': 9, 'B-RACE': 10, 'M-RACE': 11, 'E-RACE': 12, 'B-LOC': 13, 'M-LOC': 14,
-                 'E-LOC': 15,
-                 'B-EDU': 16, 'M-EDU': 17, 'E-EDU': 18, 'B-PRO': 19, 'M-PRO': 20, 'E-PRO': 21, 'S-RACE': 22,
-                 'S-NAME': 23,
-                 START_TAG: 24, STOP_TAG: 25}
 
-    all_tags = ['O', 'B-TITLE', 'M-TITLE', 'E-TITLE', 'B-NAME', 'M-NAME', 'E-NAME', 'B-CONT', 'M-CONT', 'E-CONT',
-                'B-RACE', 'M-RACE', 'E-RACE', 'B-LOC', 'M-LOC', 'E-LOC', 'B-EDU', 'M-EDU', 'E-EDU', 'B-PRO', 'M-PRO',
-                'E-PRO', 'S-RACE', 'S-NAME', START_TAG, STOP_TAG]
-    act_model = NER('bert-base', tag_to_ix, all_tags, hidden_dim=50)
+    act_model = NER('../bert-base', tag_to_ix, all_tags, hidden_dim=50)
     print('model loading...')
-    act_model.load('models/model_9')
+    act_model.load('../models/model_9')
     print('model loaded.')
     # act_model.train(training_data, batch_size=64)
     # print(testing_data[0])
@@ -348,6 +349,7 @@ if __name__ == '__main__':
     predict_ans = act_model.predict(source[0])
     print(answers)
     print(predict_ans)
+    print(act_model.predict('张宇鹏是北航的硕士'))
 
 # tag字典
 # tag_to_ix = { "O": 0, "B-BANK": 1, "I-BANK": 2, "B-PRODUCT":3,'I-PRODUCT':4,

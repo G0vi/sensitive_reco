@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>管理自定义规则</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+<link rel="stylesheet" type="text/css" href="../../css/style.css">
+
+<link rel="stylesheet" type="text/css" href="../../css/bootstrap.min.css">
+
+<script src="../../js/jquery.min.js"></script>
+<script src="../../js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/bootbox.min.js"></script>
+
+</head>
+<body>
+
+<div class="box">
+    <div class="row">
+        <a href="./main" class="col-md offset-md-10">首页</a>
+        <a href="./logout" class="col-md">退出登录</a>
+    </div>
+    <div class="title">用户自定义规则的增删改查</div>
+    <div class="content">
+        <!--搜索输入框及查询、重置按钮-->
+        <div class="container content_width">
+            <div class="person_search">
+                <div class="search_input">
+                    <div class="input-group mb-3">
+                        <span>规则描述：</span>
+                        <input id="Ktext" type="text" class="form-control" placeholder="请输入规则关键词">
+                    </div>
+                </div>
+                <div class="search_input">
+                    <div class="input-group mb-3" hidden>
+                        <span>工号：</span>
+                        <input id="job_num" type="text" class="form-control" placeholder="请输入工号">
+                    </div>
+                </div>
+                <div class="search_input">
+                    <button class="btn btn-primary search_btn" type="button" id="search_btn">查询</button>
+                    <button class="btn btn-primary search_btn" type="button" id="back_btn">重置</button>
+                </div>
+            </div>
+            <div class="line"></div>
+        </div>
+        <!--添加按钮及bootstrap的模态框-->
+        <div class="export">
+            <button id="new_add" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#renyuan">
+                <img src="../../img/add_two.png">
+                <span>添加</span>
+            </button>
+            <div class="modal fade" id="renyuan">
+                <div class="modal-dialog modal-lg modal_position">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">添加</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <table id="xztb" class="table">
+                                <!--新修改弹窗的样式-->
+                                <tbody>
+                                <tr>
+                                    <td class="tb_bg"><label for=""><font style="font-size: 14px; color: #ff0000;">*</font>表达式/关键词</label>
+                                    </td>
+                                    <td><input class="exp" type="text" placeholder="请输入表达式/关键词"></td>
+                                    <td class="tb_bg"><label for=""><font style="font-size: 14px; color: red;">*</font>规则描述</label>
+                                    </td>
+                                    <td><input class="des" type="text" placeholder="请输入规则描述"></td>
+                                </tr>
+
+                                <tr>
+                                    <td class="tb_bg"><label for="">是否允许包含其他规则</label></td>
+                                    <td>
+                                        <select class="form-control select_down" style="font-size: 13px; color: #666;">
+                                            <option>否</option>
+                                            <option>是</option>
+
+                                        </select>
+                                    </td>
+                                    <td class="tb_bg"><label for="">是否启用</label></td>
+                                    <td>
+                                        <select class="form-control select_down" style="font-size: 13px; color: #666;">
+                                            <option>是</option>
+                                            <option>否</option>
+
+                                        </select>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                            <button id="add_btn" type="button" class="btn btn-secondary">确定</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--表格列表-->
+        <table id="tb" class="table">
+            <thead>
+            <tr>
+                <th>规则id</th>
+                <th>规则表达式/关键词</th>
+                <th>规则描述</th>
+                <th>是否允许包含其他规则</th>
+                <th>是否启动</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="show_tbody">
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="../../js/mejs.js"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            async: true,
+            url: "./showAll",
+            type: "get",
+            data:{
+
+                rulesrc: 2
+            },
+            dataType: "json",
+            success: function (datas) {
+                if(datas.success){
+                    var rec_data = datas.rules;
+                        // var html = "";
+                        var tdstr;
+                        var en;
+                        var com;
+                        for(var i in rec_data) {
+                            tdstr = "";
+                            tdstr += '<td>' + rec_data[i].id + '</td>';
+                            tdstr += '<td>' + rec_data[i].regexp + '</td>';
+                            tdstr += '<td>' + rec_data[i].description + '</td>';
+                            en = '否';
+                            if(rec_data[i].is_enabled == '1'){
+                                en = '是';
+                            }
+                            com = '否';
+                            if(rec_data[i].is_combined_data == '1'){
+                                com = '是';
+                            }
+                            tdstr += '<td>' + com + '</td>';
+                            tdstr += '<td>' + en + '</td>';
+                            tdstr += '<td><a href="#" class="edit">编辑</a> <a href="#" class="del">删除</a></td>';
+                            //cur = {id: rec_data[i].id, description: rec_data[i].description, is_enabled: rec_data[i].is_enabled};
+                            $('#show_tbody').append('<tr>' + tdstr + '</tr>');
+                            $('#renyuan').modal('hide');
+                            //data.push(cur);
+                        }
+
+                }else{
+                    alert("需要登录")
+                    window.location.href = "./login";
+                }
+            }
+        });
+    });
+
+</script>
+<div style="text-align:center;margin:50px 0; font:normal 14px/24px 'MicroSoft YaHei';">
+</div>
+</body>
+</html>

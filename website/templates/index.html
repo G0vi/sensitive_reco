@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    #box{
+      height: 500px;
+      border: 1px solid #E2E3E5;
+      position: absolute;
+      left: 38%;
+      top: 25%;
+    }
+    #logo{
+      width: 370px;
+      height: 95px;
+      font-size: 30px;
+      color: #676A6C;
+      line-height: 95px;
+      margin-left: 40px;
+    }
+    #user{
+      width: 295px;
+      height: 50px;
+      margin-left: 40px;
+    }
+    #pass{
+      width: 295px;
+      height: 50px;
+      margin-left: 40px;
+    }
+    .input-group{
+      margin-left: 40px;
+    }
+    #img-submit {
+      width: 95px;
+      height: 30px;
+      margin-top: 15px;
+      border-radius: 2px;
+      cursor: pointer;
+      position: absolute;
+      z-index: 3;
+      left: 10px;
+      top: 0;
+    }
+    #validateCode {
+      height: 55px;
+      padding-left: 120px;
+      width: 295px;
+    }
+    #verify{
+      width: 295px;
+      height: 60px;
+      margin-left: 40px;
+      border: 1px solid #EDEDEE;
+    }
+    #btn-login{
+      width: 295px;
+      height: 50px;
+      margin-left: 40px;
+      margin-top: 20px;
+    }
+    #btn-reg{
+      width: 295px;
+      height: 50px;
+      margin-left: 40px;
+      margin-top: 20px;
+    }
+    #remember{
+      width: 80px;
+      height: 20px;
+      margin-left: 50px;
+      margin-top: 20px;
+      color: #676A6C;
+      font-size: 15px;
+    }
+  </style>
+<head>
+    <meta charset="UTF-8">
+    <title> Login </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/emn178/js-sha3@0.8.0/build/sha3.min.js"></script>
+    <script src="/js/cookie.js"></script>
+</head>
+  <body>
+    <div id = "box">
+      <div id = "logo"> 登录 </div>
+      <div id = "info">
+        <form action="Login" method = "post">
+          <br><input type = "text" class = "form-control" id = "user" name = "user" placeholder = "用户名">
+          <br><input type = "password" class = "form-control" id = "pass"  name = "pwd" placeholder = "密码">
+          <input type = "button" class = "btn-info" id = "btn-login" name = "btn-login" value = "登录">
+        </form>
+        <!form action="Register" method="POST">
+          <input type = "button" class ="btn-info"  id = "btn-reg"   name = "btn-reg"   value = "注册">
+        <!/form>
+        <script>
+          $(document).ready(function(){
+            $("#btn-reg").click(function(){
+              //window.location.href="D:/2019秋季学期/数据库/Register.html";
+              window.location.href="./register";
+            });
+
+            $('input[name="btn-login"]').click(function(){
+              var $username =  $('input[name="user"]').val();
+              var $password = $('input[name="pwd"]').val();
+              if ($username === "" || $password === ""){
+                alert("用户名、密码不能为空");
+                return false;
+              }
+              var hashed_pwd = keccak256($password);
+              $.ajax({
+                type:"post",
+                url:"./login",
+                data:{
+                  username:$username,
+                  passwd:hashed_pwd
+                },
+                dataType:"json",
+                success:function(data){
+                  if (data.success){
+                    //setCookie("username",$username,1);
+                    //setCookie("token",data.salt_pwd,1);
+                    window.location.href = "./main";
+                  }
+                  else {
+                    alert('登录失败！' + data.message);
+                  }
+                },
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                  alert("登录失败");
+                }
+              });
+            })
+          });
+        </script>
+      </div>
+    </div>
+  </body>
+</html>
